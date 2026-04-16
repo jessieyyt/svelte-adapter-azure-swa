@@ -1,5 +1,5 @@
 <script>
-  export let form;
+  let { form } = $props();
 </script>
 
 <h1>Form Action Demo</h1>

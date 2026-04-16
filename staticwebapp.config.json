@@ -1,6 +1,7 @@
 {
   "navigationFallback": {
-    "rewrite": "/api/__render"
+    "rewrite": "/api/__render",
+    "exclude": ["/_app/*", "/favicon.ico"]
   },
   "platform": {
     "apiRuntime": "node:18"

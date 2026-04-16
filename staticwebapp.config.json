@@ -1,9 +1,40 @@
 {
+  "routes": [
+    {
+      "route": "/api/*"
+    },
+    {
+      "route": "/data-api/*"
+    },
+    {
+      "route": "*",
+      "methods": [
+        "POST",
+        "PUT",
+        "DELETE",
+        "PATCH"
+      ],
+      "rewrite": "/api/sk_render"
+    },
+    {
+      "route": "/_app/immutable/*",
+      "headers": {
+        "cache-control": "public, immutable, max-age=31536000"
+      }
+    },
+    {
+      "route": "/index.html",
+      "rewrite": "/api/sk_render"
+    },
+    {
+      "route": "/",
+      "rewrite": "/api/sk_render"
+    }
+  ],
   "navigationFallback": {
-    "rewrite": "/api/sk_render",
-    "exclude": ["/_app/*", "/favicon.ico"]
+    "rewrite": "/api/sk_render"
   },
   "platform": {
-    "apiRuntime": "node:18"
+    "apiRuntime": "node:20"
   }
 }

@@ -1,6 +1,6 @@
 {
   "navigationFallback": {
-    "rewrite": "/api/__render",
+    "rewrite": "/api/sk_render",
     "exclude": ["/_app/*", "/favicon.ico"]
   },
   "platform": {
